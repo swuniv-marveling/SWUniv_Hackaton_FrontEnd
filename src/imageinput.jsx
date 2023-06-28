@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ImageUpload = () => {
   const [selectedImage, setSelectedImage] = useState(null);
+  const navigate = useNavigate();
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -18,8 +20,13 @@ const ImageUpload = () => {
     event.preventDefault();
   };
 
+  const handleSubmit=()=>{
+    //업로드하고나서 나중에 처리되는 함수 여기다가쓰면돼
+  }
+
   return (
     <div>
+      <h1>이미지 등록하기</h1>
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
