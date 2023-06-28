@@ -49,7 +49,7 @@ const DrawingEditor = () => {
 
   return (
     <div>
-      <h1>그림 그리기</h1>
+      <h1>수정 영역 선택하기</h1>
       <input type="file" onChange={handleImageChange} />
 
       <Stage
@@ -73,8 +73,8 @@ const DrawingEditor = () => {
             <Line
               key={index}
               points={line.points}
-              stroke="red"
-              strokeWidth={2}
+              stroke="white"
+              strokeWidth={10}
               tension={0.5}
               lineCap="round"
               globalCompositeOperation="source-over"
