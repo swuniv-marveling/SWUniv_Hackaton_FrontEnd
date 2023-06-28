@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import Header from "./components/Layout/Header";
+import LoginPage from "./pages/LoginPage";
 
 const StyledApp = styled.div`
   background-color: #000011;
@@ -17,6 +18,7 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
       </Routes>
     </StyledApp>
   );
