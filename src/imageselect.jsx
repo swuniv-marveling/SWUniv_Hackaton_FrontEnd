@@ -1,82 +1,89 @@
-import React, { useRef, useState } from 'react';
-import { Stage, Layer, Image, Line, Circle, Transformer } from 'react-konva';
+import React, { useState, useRef } from 'react';
+import { Stage, Layer, Image, Line } from 'react-konva';
 
-const DrawingBoard = () => {
-  const imageRef = useRef(null);
+const DrawingEditor = () => {
+  const [image, setImage] = useState(null);
   const [lines, setLines] = useState([]);
-  const [selectedId, setSelectedId] = useState(null);
+  const isDrawing = useRef(false);
+  const stageRef = useRef(null);
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      const img = new window.Image();
+      img.src = e.target.result;
+
+      img.onload = () => {
+        setImage(img);
+      };
+    };
+
+    reader.readAsDataURL(file);
+  };
 
   const handleMouseDown = (event) => {
-    // 그리기 시작 위치 설정
+    isDrawing.current = true;
+
     const { offsetX, offsetY } = event.evt;
-    setLines([...lines, { tool: 'pen', points: [offsetX, offsetY] }]);
+
+    setLines([...lines, { points: [offsetX, offsetY] }]);
   };
 
   const handleMouseMove = (event) => {
-    // 그리기 중인 동안 포인트 추가
-    if (!lines.length) {
-      return;
-    }
+    if (!isDrawing.current) return;
+
     const { offsetX, offsetY } = event.evt;
     const updatedLines = [...lines];
     const lastLine = updatedLines[updatedLines.length - 1];
+
     lastLine.points = lastLine.points.concat([offsetX, offsetY]);
+
     setLines(updatedLines);
   };
 
   const handleMouseUp = () => {
-    // 그리기 종료
-    setLines([...lines]);
-  };
-
-  const handleSelect = (e) => {
-    const shapeId = e.target.index;
-    setSelectedId(shapeId);
-  };
-
-  const handleDelete = () => {
-    if (selectedId !== null) {
-      const updatedLines = lines.filter((_, index) => index !== selectedId);
-      setLines(updatedLines);
-      setSelectedId(null);
-    }
+    isDrawing.current = false;
   };
 
   return (
     <div>
+      <h1>그림 그리기</h1>
+      <input type="file" onChange={handleImageChange} />
+
       <Stage
-        width={800}
-        height={600}
+        width={window.innerWidth}
+        height={window.innerHeight}
         onMouseDown={handleMouseDown}
         onMousemove={handleMouseMove}
         onMouseup={handleMouseUp}
+        ref={stageRef}
       >
         <Layer>
-          <Image
-            image={imageRef.current}
-            width={800}
-            height={600}
-          />
+          {image && (
+            <Image
+              image={image}
+              width={window.innerWidth}
+              height={window.innerHeight}
+            />
+          )}
+
           {lines.map((line, index) => (
             <Line
               key={index}
               points={line.points}
               stroke="red"
-              strokeWidth={3}
+              strokeWidth={2}
               tension={0.5}
-              draggable
-              onClick={handleSelect}
+              lineCap="round"
+              globalCompositeOperation="source-over"
             />
           ))}
-          <Transformer
-            selectedShapeName={selectedId !== null ? 'Line' : ''}
-            nodes={[Line]}
-          />
         </Layer>
       </Stage>
-      <button onClick={handleDelete}>Delete Selected</button>
     </div>
   );
 };
 
-export default DrawingBoard;
+export default DrawingEditor;
