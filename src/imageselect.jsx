@@ -7,6 +7,7 @@ const DrawingEditor = () => {
   const [text, setText] = useState('');
   const isDrawing = useRef(false);
   const stageRef = useRef(null);
+  const imageRef = useRef(null);
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -52,6 +53,11 @@ const DrawingEditor = () => {
     setText(event.target.value);
   };
 
+  const handleImageLoad = () => {
+    const img = imageRef.current;
+    setImage(img);
+  };
+
   const saveDrawing = () => {
     // 그림 데이터와 텍스트를 서버로 전송하는 로직을 작성하세요
     console.log('그림 저장:', lines, text);
@@ -75,8 +81,10 @@ const DrawingEditor = () => {
           {image && (
             <Image
               image={image}
-              width={window.innerWidth}
-              height={window.innerHeight}
+              width={image.width}
+              height={image.height}
+              ref={imageRef}
+              onLoad={handleImageLoad}
             />
           )}
 
@@ -99,7 +107,6 @@ const DrawingEditor = () => {
             fontSize={30}
             fill="white"
             align="center"
-            width={window.innerWidth}
           />
         </Layer>
       </Stage>
