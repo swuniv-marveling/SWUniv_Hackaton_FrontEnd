@@ -23,6 +23,12 @@ const StyledButton = styled.div`
   z-index: 10;
 `;
 
+const StyledButtonGroup = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 3rem;
+`;
+
 function Header() {
   const navigation = useNavigate();
   const location = useLocation();
@@ -31,12 +37,23 @@ function Header() {
   return (
     <StyledHeader>
       <StyledLogo onClick={() => navigation("/")}>Loca</StyledLogo>
-      {location.pathname === "/gallery" ? (
-        <></>
-      ) : !user.access_token ? (
-        <StyledButton onClick={() => navigation("/login")}>LOGIN</StyledButton>
-      ) : (
-        <StyledButton onClick={() => navigation("/gallery")}>MY</StyledButton>
+      {!(location.pathname === "/login" || location.pathname === "/signup") && (
+        <StyledButtonGroup>
+          <StyledButton onClick={() => navigation("/every")}>
+            사진첩
+          </StyledButton>
+          {location.pathname === "/gallery" ? (
+            <></>
+          ) : !user.access_token ? (
+            <StyledButton onClick={() => navigation("/login")}>
+              LOGIN
+            </StyledButton>
+          ) : (
+            <StyledButton onClick={() => navigation("/gallery")}>
+              MY
+            </StyledButton>
+          )}
+        </StyledButtonGroup>
       )}
     </StyledHeader>
   );
