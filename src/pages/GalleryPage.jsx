@@ -9,11 +9,17 @@ const StyledGalleryPage = styled.div`
 
 function GalleryPage() {
   const [showTab, setShowTab] = useState(false);
+  const [detailInfo, setDetailInfo] = useState({});
 
   return (
     <StyledGalleryPage>
       <User showTab={showTab} />
-      <Gallery showTab={showTab} setShowTab={setShowTab} />
+      <Gallery
+        showTab={showTab}
+        setShowTab={setShowTab}
+        detailInfo={detailInfo}
+        setDetailInfo={setDetailInfo}
+      />
     </StyledGalleryPage>
   );
 }

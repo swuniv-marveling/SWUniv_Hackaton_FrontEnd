@@ -2,6 +2,9 @@ import React from "react";
 import { styled } from "styled-components";
 import { LuDownload } from "react-icons/lu";
 import { BsTrash3 } from "react-icons/bs";
+import axios from "axios";
+import { API } from "../../global/Constants";
+import { useSelector } from "react-redux";
 
 const StyledTab = styled.div`
   position: fixed;
@@ -49,6 +52,26 @@ const StyledWidth50 = styled.div`
 `;
 
 function Tab(props) {
+  const user = useSelector((state) => state.user);
+
+  const deleteHandler = () => {
+    axios
+      .delete(API + "/work/delete/" + props.detailInfo.work_id, {
+        headers: {
+          Authorization: "Bearer " + user.access_token,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        props.setDetailInfo({});
+        props.setShowTab(false);
+        props.setReload(!props.reload);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   if (props.showTab)
     return (
       <StyledTab>
@@ -56,7 +79,7 @@ function Tab(props) {
           <StyledLocal>
             <StyledTitle>현지화 이미지</StyledTitle>
             <StyledButtonGroup>
-              <StyledButton>
+              <StyledButton onClick={deleteHandler}>
                 <BsTrash3 />
               </StyledButton>
               <StyledButton>
@@ -71,7 +94,7 @@ function Tab(props) {
               display: "block",
               margin: "auto",
             }}
-            src="https://assets.community.lomography.com/89/20d68ad867732cbd6e18c0e9faec7e511b4385/576x576x2.jpg?auth=44c7207f9e9ba6944c9e9fdb0bf284865d718ae9"
+            src={props.detailInfo.output_url}
             alt="local_Image"
           />
           <StyledLocal style={{ margin: "50px 0", gap: "2rem" }}>
@@ -79,13 +102,15 @@ function Tab(props) {
               <StyledTitle>원본 이미지</StyledTitle>
               <img
                 style={{ width: "100%" }}
-                src="https://assets.community.lomography.com/89/20d68ad867732cbd6e18c0e9faec7e511b4385/576x576x2.jpg?auth=44c7207f9e9ba6944c9e9fdb0bf284865d718ae9"
+                src={props.detailInfo.input_url}
                 alt="basic_Image"
               />
             </StyledWidth50>
             <StyledWidth50>
               <StyledTitle>프롬프트</StyledTitle>
-              <span style={{ fontSize: "20px" }}>Missing claim: sub</span>
+              <span style={{ fontSize: "20px" }}>
+                {props.detailInfo.prompt_text}
+              </span>
             </StyledWidth50>
           </StyledLocal>
         </StyledContent>
