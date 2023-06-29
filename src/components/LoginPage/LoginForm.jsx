@@ -5,6 +5,8 @@ import { useDispatch } from "react-redux";
 import { login } from "../../redux/modules/userSlice";
 import { API } from "../../global/Constants";
 import axios from "axios";
+import { IoPerson } from "react-icons/io5";
+import { BiSolidLockAlt } from "react-icons/bi";
 
 const StyledLogin = styled.div`
   text-align: center;
@@ -12,11 +14,17 @@ const StyledLogin = styled.div`
 
 const StyledTitle = styled.div`
   font-size: 48px;
-  margin-bottom: 25px;
+  margin: 50px 0 70px 0;
+`;
+
+const StyledInputDiv = styled.div`
+  width: 480px;
+  position: relative;
+  margin: 0 auto;
 `;
 
 const StyledInput = styled.input`
-  width: 480px;
+  width: 100%;
   font-size: 24px;
   background-color: transparent;
   border: 0;
@@ -39,11 +47,12 @@ const StyledSubmit = styled.button`
   color: #000011;
   border-radius: 10px;
   cursor: pointer;
+  display: none;
 `;
 
 const StyledSignup = styled.div`
   font-size: 18px;
-  margin-top: 30px;
+  margin-top: 70px;
   cursor: pointer;
 `;
 
@@ -60,7 +69,7 @@ function LoginForm() {
       .then((response) => {
         if (response.data.access_token) {
           alert("안녕하세요.");
-          dispatch(login(response.data.access_token));
+          dispatch(login(response.data));
           navigation("/", { replace: true });
         } else alert("다시 시도해주세요.");
       })
@@ -69,30 +78,34 @@ function LoginForm() {
 
   return (
     <StyledLogin>
-      <StyledTitle className="font-bold">LOGIN</StyledTitle>
+      <StyledTitle className="font-bold">5초만에 로그인하기</StyledTitle>
       <form onSubmit={submitHandler}>
-        <StyledInput
-          type="text"
-          placeholder="id"
-          value={userInfo.id}
-          onChange={(e) => {
-            setUserInfo({ ...userInfo, id: e.target.value });
-          }}
-        />
-        <br />
-        <StyledInput
-          type="password"
-          placeholder="password"
-          value={userInfo.password}
-          onChange={(e) => {
-            setUserInfo({ ...userInfo, password: e.target.value });
-          }}
-        />
-        <br />
+        <StyledInputDiv>
+          <IoPerson className="inputIcon" size={24} />
+          <StyledInput
+            type="text"
+            placeholder="ID"
+            value={userInfo.id}
+            onChange={(e) => {
+              setUserInfo({ ...userInfo, id: e.target.value });
+            }}
+          />
+        </StyledInputDiv>
+        <StyledInputDiv>
+          <BiSolidLockAlt className="inputIcon" size={24} />
+          <StyledInput
+            type="password"
+            placeholder="Password"
+            value={userInfo.password}
+            onChange={(e) => {
+              setUserInfo({ ...userInfo, password: e.target.value });
+            }}
+          />
+        </StyledInputDiv>
         <StyledSubmit type="submut">Login</StyledSubmit>
       </form>
       <StyledSignup onClick={() => navigation("/signup", { replace: true })}>
-        {"Sign up >>"}
+        {"처음 오셨나요? >>"}
       </StyledSignup>
     </StyledLogin>
   );
