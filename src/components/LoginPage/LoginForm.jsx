@@ -12,7 +12,7 @@ const StyledLogin = styled.div`
 
 const StyledTitle = styled.div`
   font-size: 48px;
-  margin-bottom: 25px;
+  margin: 50px 0 70px 0;
 `;
 
 const StyledInput = styled.input`
@@ -39,11 +39,12 @@ const StyledSubmit = styled.button`
   color: #000011;
   border-radius: 10px;
   cursor: pointer;
+  display: none;
 `;
 
 const StyledSignup = styled.div`
   font-size: 18px;
-  margin-top: 30px;
+  margin-top: 70px;
   cursor: pointer;
 `;
 
@@ -60,7 +61,7 @@ function LoginForm() {
       .then((response) => {
         if (response.data.access_token) {
           alert("안녕하세요.");
-          dispatch(login(response.data.access_token));
+          dispatch(login(response.data));
           navigation("/", { replace: true });
         } else alert("다시 시도해주세요.");
       })
@@ -69,7 +70,7 @@ function LoginForm() {
 
   return (
     <StyledLogin>
-      <StyledTitle className="font-bold">LOGIN</StyledTitle>
+      <StyledTitle className="font-bold">5초만에 로그인하기</StyledTitle>
       <form onSubmit={submitHandler}>
         <StyledInput
           type="text"
@@ -92,7 +93,7 @@ function LoginForm() {
         <StyledSubmit type="submut">Login</StyledSubmit>
       </form>
       <StyledSignup onClick={() => navigation("/signup", { replace: true })}>
-        {"Sign up >>"}
+        {"처음 오셨나요? >>"}
       </StyledSignup>
     </StyledLogin>
   );

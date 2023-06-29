@@ -10,7 +10,7 @@ const StyledSingup = styled.div`
 
 const StyledTitle = styled.div`
   font-size: 48px;
-  margin-bottom: 25px;
+  margin: 50px 0 70px 0;
 `;
 
 const StyledInput = styled.input`
@@ -37,17 +37,12 @@ const StyledSubmit = styled.button`
   color: #000011;
   border-radius: 10px;
   cursor: pointer;
-`;
-
-const StyledLogin = styled.div`
-  font-size: 18px;
-  margin-top: 30px;
-  cursor: pointer;
+  display: none;
 `;
 
 function SignupForm() {
   const navigation = useNavigate();
-  const [userInfo, setUserInfo] = useState({ id: "", password: "" });
+  const [userInfo, setUserInfo] = useState({ name: "", id: "", password: "" });
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -65,8 +60,19 @@ function SignupForm() {
 
   return (
     <StyledSingup>
-      <StyledTitle className="font-bold">SIGN UP</StyledTitle>
+      <StyledTitle className="font-bold">
+        {"간편하게 회원가입해 보세요 :)"}
+      </StyledTitle>
       <form onSubmit={submitHandler}>
+        <StyledInput
+          type="text"
+          placeholder="닉네임"
+          value={userInfo.name}
+          onChange={(e) => {
+            setUserInfo({ ...userInfo, name: e.target.value });
+          }}
+        />
+        <br />
         <StyledInput
           type="text"
           placeholder="id"
@@ -87,9 +93,6 @@ function SignupForm() {
         <br />
         <StyledSubmit type="submut">Sign up</StyledSubmit>
       </form>
-      <StyledLogin onClick={() => navigation("/login", { replace: true })}>
-        {"Login >>"}
-      </StyledLogin>
     </StyledSingup>
   );
 }
