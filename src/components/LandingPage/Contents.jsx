@@ -12,6 +12,7 @@ const StyledContents = styled.div`
 const StyledTitle = styled.div`
   font-size: 64px;
   margin-top: 50px;
+  z-index: 20;
 `;
 const StyledExplain = styled.div`
   font-size: 24px;
@@ -35,11 +36,15 @@ function Contents() {
 
   return (
     <StyledContents>
-      <StyledTitle className="font-bold">이미지 현지화</StyledTitle>
-      <StyledExplain>
-        내 사진 현지화를 통해
+      <StyledTitle className="font-bold">
+        외국에서 찍은 사진을
         <br />
-        새로운 이미지로!
+        우리나라 느낌으로 바꿔보세요
+      </StyledTitle>
+      <StyledExplain>
+        사진을 업로드한 후 선택 영역을 지정하여
+        <br />
+        나만의 새로운 이미지로!
       </StyledExplain>
       <StyledButton
         className="font-bold"
