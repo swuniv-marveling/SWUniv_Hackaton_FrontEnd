@@ -33,6 +33,10 @@ const ImageUpload = () => {
     fileInputRef.current.click();
   };
 
+  const handleRemoveImage = () => {
+    setSelectedImage(null);
+  };
+
   return (
     <div>
       <h1>이미지 등록하기</h1>
@@ -40,8 +44,8 @@ const ImageUpload = () => {
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         style={{
-          width: '300px',
-          height: '200px',
+          width: '1200px',
+          height: '650px',
           border: '2px dashed gray',
           borderRadius: '5px',
           display: 'flex',
@@ -69,16 +73,23 @@ const ImageUpload = () => {
           )}
         </label>
         {selectedImage && (
-          <img
-            src={selectedImage}
-            alt="Preview"
-            style={{
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-            }}
-          />
+          <div>
+            <img
+              src={selectedImage}
+              alt="Preview"
+              style={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+              }}
+            />
+          </div>
+        )}
+        {selectedImage && (
+          <button type="button" onClick={handleRemoveImage}>
+            이미지 변경
+          </button>
         )}
       </div>
     </div>
