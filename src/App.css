@@ -1,2 +1,5 @@
-.App {
+.app {
+  background-image: url('/path/to/your/image.jpg'); /* 원하는 이미지 경로로 변경 */
+  background-repeat: no-repeat;
+  background-size: cover;
 }

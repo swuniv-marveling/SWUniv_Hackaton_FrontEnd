@@ -38,7 +38,7 @@ const ImageUpload = () => {
   };
 
   return (
-    <div>
+    <div style={{ backgroundColor: 'transparent', color: 'white' }}>
       <h1>이미지 등록하기</h1>
       <div
         onDrop={handleDrop}
@@ -54,6 +54,7 @@ const ImageUpload = () => {
           margin: '20px 0',
           position: 'relative',
           overflow: 'hidden',
+          backgroundColor: 'rgba(255, 255, 255, 0.2)',
         }}
       >
         <input
