@@ -50,6 +50,7 @@ function Gallery(props) {
             data={item}
             showTab={props.showTab}
             setShowTab={props.setShowTab}
+            detailInfo={props.detailInfo}
             setDetailInfo={props.setDetailInfo}
           />
         ))}

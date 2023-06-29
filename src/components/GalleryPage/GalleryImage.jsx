@@ -12,8 +12,13 @@ function GalleryImage(props) {
       src={props.data.output_url}
       alt="Local_Image"
       onClick={() => {
-        props.setShowTab(!props.showTab);
-        props.setDetailInfo(props.data);
+        if (props.detailInfo.work_id === props.data.work_id) {
+          props.setShowTab(false);
+          props.setDetailInfo({});
+        } else {
+          props.setShowTab(true);
+          props.setDetailInfo(props.data);
+        }
       }}
     />
   );
