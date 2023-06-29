@@ -1,5 +1,6 @@
-import React, { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import "./index.css";
 
 const ImageUpload = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -26,7 +27,7 @@ const ImageUpload = () => {
   };
 
   const handleNavigate = () => {
-    navigate('/mypage'); // '/mypage'로 이동
+    navigate("/mypage"); // '/mypage'로 이동
   };
 
   const handleSelectImage = () => {
@@ -38,63 +39,132 @@ const ImageUpload = () => {
   };
 
   return (
-    <div style={{ backgroundColor: 'transparent', color: 'white' }}>
+    <div
+      style={{
+        backgroundColor: "transparent",
+        color: "white",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <h1>이미지 등록하기</h1>
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         style={{
-          width: '1200px',
-          height: '650px',
-          border: '2px dashed gray',
-          borderRadius: '5px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          margin: '20px 0',
-          position: 'relative',
-          overflow: 'hidden',
-          backgroundColor: 'rgba(255, 255, 255, 0.2)',
+          width: "800px",
+          height: "800px",
+          border: "2px dashed gray",
+          borderRadius: "5px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          margin: "20px 0",
+          position: "relative",
+          overflow: "hidden",
+          backgroundColor: "rgba(255, 255, 255, 0.01)",
         }}
       >
         <input
           type="file"
           onChange={handleImageChange}
-          style={{ display: 'none' }}
+          style={{ display: "none" }}
           ref={fileInputRef}
         />
-        <label htmlFor="file-input">
+        <label
+          htmlFor="file-input"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+            width: "100%",
+          }}
+        >
           {!selectedImage && (
-            <p>이미지를 여기로 드래그 앤 드롭하거나 선택하세요.</p>
+            <p style={{ fontfamily: "AppleSDGothicNeoB", fontSize: "30px" }}>
+              이미지를 여기다 끌어다 놓으세요.
+            </p>
           )}
           {!selectedImage && (
-            <button type="button" onClick={handleSelectImage}>
+            <button
+              type="button"
+              onClick={handleSelectImage}
+              style={{
+                width: "260px",
+                height: "50px",
+                borderRadius: "40px",
+                backgroundColor: "white",
+                color: "#654BFF",
+                border: "none",
+                cursor: "pointer",
+                fontSize: "30px",
+                fontFamily: "AppleSDGothicNeoB",
+                padding: "5px",
+                textAlign: "center",
+              }}
+            >
               이미지 선택
             </button>
           )}
         </label>
         {selectedImage && (
-          <div style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 }}>
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+            }}
+          >
             <img
               src={selectedImage}
               alt="Preview"
               style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                maxWidth: '100%',
-                maxHeight: '100%',
-                objectFit: 'contain'
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
               }}
             />
           </div>
         )}
       </div>
       {selectedImage && (
-        <button type="button" onClick={handleRemoveImage}>
-          이미지 변경
-        </button>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            width: "1200px",
+          }}
+        >
+          <button
+            type="button"
+            onClick={handleRemoveImage}
+            style={{
+              width: "260px",
+              height: "50px",
+              borderRadius: "40px",
+              backgroundColor: "#654BFF",
+              color: "white",
+              border: "none",
+              cursor: "pointer",
+              fontSize: "30px",
+              fontFamily: "AppleSDGothicNeoB",
+              padding: "5px",
+              textAlign: "center",
+            }}
+          >
+            선택 완료
+          </button>
+        </div>
       )}
     </div>
   );

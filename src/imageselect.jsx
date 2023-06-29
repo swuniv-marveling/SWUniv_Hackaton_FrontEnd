@@ -104,7 +104,7 @@ const DrawingEditor = () => {
   const handleImageLoad = () => {
     const img = imageRef.current;
     const stage = stageRef.current;
-  
+
     const boxWidth = 2000; 
     const boxHeight = 800; 
     const stageWidth = stage.width();
@@ -170,13 +170,13 @@ const DrawingEditor = () => {
 
           {image && (
             <Image
-            image={image}
-            x={(window.innerWidth - image.width) / 2}
-            y={(window.innerHeight - image.height) / 2}
-            ref={imageRef}
-            draggable={false}
-            onLoad={handleImageLoad}
-          />
+              image={image}
+              x={(window.innerWidth - image.width) / 2}
+              y={(window.innerHeight - image.height) / 2}
+              ref={imageRef}
+              draggable={false}
+              onLoad={handleImageLoad}
+            />
           )}
           
           {lines.map((line, index) => (
