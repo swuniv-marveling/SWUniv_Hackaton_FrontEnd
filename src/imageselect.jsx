@@ -146,53 +146,76 @@ const DrawingEditor = () => {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        backgroundColor: "transparent",
+        color: "white",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <h1>그림 그리기</h1>
       <input type="file" onChange={handleImageChange} style={{ marginBottom: '10px' }} />
 
-      <Stage
-        width={window.innerWidth}
-        height={window.innerHeight}
-        onMouseDown={handleMouseDown}
-        onMousemove={handleMouseMove}
-        onMouseup={handleMouseUp}
-        ref={stageRef}
+      <div
+        style={{
+          width: "800px",
+          height: "800px",
+          border: "2px dashed gray",
+          borderRadius: "5px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          margin: "20px 0",
+          position: "relative",
+          overflow: "hidden",
+          backgroundColor: "rgba(255, 255, 255, 0.01)",
+        }}
       >
-        <Layer>
-          <Rect
-            x={(window.innerWidth - 2000) / 2}
-            y={(window.innerHeight - 1000) / 2}
-            width={2000}
-            height={1000}
-            fill="rgba(255, 255, 255, 0.3)"
-            stroke="black"
-          />
+        <Stage
+          width={800}
+          height={800}
+          onMouseDown={handleMouseDown}
+          onMousemove={handleMouseMove}
+          onMouseup={handleMouseUp}
+          ref={stageRef}
+        >
+          <Layer>
+            <Rect
+              width={800}
+              height={800}
+              fill="rgba(255, 255, 255, 0.3)"
+              stroke="black"
+            />
 
-          {image && (
-            <Image
-              image={image}
-              x={(window.innerWidth - image.width) / 2}
-              y={(window.innerHeight - image.height) / 2}
-              ref={imageRef}
-              draggable={false}
-              onLoad={handleImageLoad}
-            />
-          )}
-          
-          {lines.map((line, index) => (
-            <Line
-              key={index}
-              points={line.points}
-              stroke="white"
-              strokeWidth={30}
-              tension={0.5}
-              lineCap="round"
-              globalCompositeOperation="source-over"
-              listening={false} // 이미지 위에서는 마우스 이벤트를 받지 않도록 설정
-            />
-          ))}
-        </Layer>
-      </Stage>
+            {image && (
+              <Image
+                image={image}
+                x={(800 - image.width) / 2}
+                y={(800 - image.height) / 2}
+                ref={imageRef}
+                draggable={false}
+                onLoad={handleImageLoad}
+              />
+            )}
+            
+            {lines.map((line, index) => (
+              <Line
+                key={index}
+                points={line.points}
+                stroke="white"
+                strokeWidth={30}
+                tension={0.5}
+                lineCap="round"
+                globalCompositeOperation="source-over"
+                listening={false} // 이미지 위에서는 마우스 이벤트를 받지 않도록 설정
+              />
+            ))}
+          </Layer>
+        </Stage>
+      </div>
 
       <input type="text" value={text} onChange={handleTextChange} placeholder="텍스트 입력" />
       <button onClick={saveDrawing}>저장하기</button>

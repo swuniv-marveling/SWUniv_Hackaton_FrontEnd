@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./index.css";
-import ImageSelect from "./imageselect";
+
 
 const ImageUpload = () => {
   const [selectedImage, setSelectedImage] = useState(null);
