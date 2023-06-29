@@ -1,27 +1,33 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import ImageUpload from './imageinput';
-import ImageSelect from './imageselect';
+import React from "react";
+import styled from "styled-components";
+import { Routes, Route } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
+import Header from "./components/Layout/Header";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import ImageUpload from "./imageinput";
+import ImageSelect from "./imageselect";
 
-export default function App() {
+const StyledApp = styled.div`
+  background-color: #000011;
+  color: #f9fbfd;
+  height: 100vh;
+  padding: 0 50px;
+`;
+
+function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/user/imageinput">이미지 등록하기</Link>
-            </li>
-            <li>
-              <Link to="/user/imageselect">이미지 영역 선택하기</Link>
-            </li>
-          </ul>
-        </nav>
-        <Routes>
-          <Route path="/user/imageinput" element={<ImageUpload />} />
-          <Route path="/user/imageselect" element={<ImageSelect />} />
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <StyledApp>
+      <Header />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/user/imageinput" element={<ImageUpload />} />
+        <Route path="/user/imageselect" element={<ImageSelect />} />
+      </Routes>
+    </StyledApp>
   );
 }
+
+export default App;
