@@ -1,37 +1,19 @@
-import React, { useState, useRef } from 'react';
-import { Stage, Layer, Rect, Image, Line, Text } from 'react-konva';
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Stage, Layer, Rect, Image, Line } from "react-konva";
+import EnterImage from "./assets/images/Enter.png";
 
 const DrawingEditor = () => {
   const [image, setImage] = useState(null);
   const [lines, setLines] = useState([]);
-  const [text, setText] = useState('');
+  const [text, setText] = useState("");
+  const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
   const isDrawing = useRef(false);
   const stageRef = useRef(null);
   const imageRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
-
-  const saveDrawing = () => {
-    // 그림 데이터와 텍스트를 백엔드로 전송
-    const payload = {
-      lines: lines,
-      prompt: text, // 백엔드에 'prompt'라는 변수로 텍스트 전송
-    };
-
-    fetch('http://your-backend-server.com/api/save-drawing', { // 백엔드 API endpoint, 수정 필요
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data))
-      .catch((error) => console.error('Error:', error));
-
-    console.log('그림 저장:', lines, text);
-  };
-
-  //마우스 위치가 이미지 내부인지 확인하는 함수
   const isWithinImage = (x, y) => {
     if (!image) return false;
 
@@ -48,39 +30,62 @@ const DrawingEditor = () => {
     );
   };
 
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
+  useEffect(() => {
+    if (image) {
       const img = new window.Image();
-      img.src = e.target.result;
-
+      img.src = image;
       img.onload = () => {
-        setImage(img);
+        imageRef.current.image(img);
+        imageRef.current.getLayer().batchDraw();
       };
-    };
-
-    reader.readAsDataURL(file);
-  };
-
+    }
+  }, [image]);
   const handleMouseDown = (event) => {
-    if (!image) return; // 이미지가 없을 경우 그리기 작업 중지
-
     isDrawing.current = true;
 
     const { offsetX, offsetY } = event.evt;
-    // 코드 수정: 이미지 내부에서만 그림 그리기 시작
+
     if (isWithinImage(offsetX, offsetY)) {
-      isDrawing.current = true;
       setLines([...lines, { points: [offsetX, offsetY] }]);
     }
+};
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+  
+    reader.onload = (e) => {
+      setImage(e.target.result);
+  
+      // Create new image to get its size
+      const tempImg = new window.Image();
+      tempImg.onload = () => {
+        const aspectRatio = tempImg.width / tempImg.height;
+        let imgWidth, imgHeight;
+  
+        if (tempImg.width > tempImg.height) {
+          imgWidth = 800;
+          imgHeight = imgWidth / aspectRatio;
+        } else {
+          imgHeight = 600;
+          imgWidth = imgHeight * aspectRatio;
+        }
+  
+        // Update image size state
+        setImageSize({ width: imgWidth, height: imgHeight });
+      };
+      tempImg.src = e.target.result;
+    };
+  
+    reader.readAsDataURL(file);
   };
+  
 
   const handleMouseMove = (event) => {
     if (!isDrawing.current) return;
 
     const { offsetX, offsetY } = event.evt;
+
     if (isWithinImage(offsetX, offsetY)) {
       const updatedLines = [...lines];
       const lastLine = updatedLines[updatedLines.length - 1];
@@ -89,10 +94,10 @@ const DrawingEditor = () => {
 
       setLines(updatedLines);
     } else {
-      // 이미지 영역 밖으로 나가면 그리기 중지
       isDrawing.current = false;
     }
   };
+
   const handleMouseUp = () => {
     isDrawing.current = false;
   };
@@ -101,48 +106,21 @@ const DrawingEditor = () => {
     setText(event.target.value);
   };
 
-  const handleImageLoad = () => {
-    const img = imageRef.current;
-    const stage = stageRef.current;
+  const handleTextSave = () => {
+    // 텍스트를 백엔드로 보내는 로직 구현
+    const textToSend = text;
+    // 백엔드로 텍스트를 보내는 API 호출 또는 로직 구현
 
-    const boxWidth = 2000; 
-    const boxHeight = 800; 
-    const stageWidth = stage.width();
-    const stageHeight = stage.height();
-  
-    let scaleX = stageWidth / img.width;
-    let scaleY = stageHeight / img.height;
-  
-    // 이미지를 박스 안에 맞추기 위한 스케일 팩터 계산
-    const scaleFactor = Math.min(scaleX, scaleY);
-  
-    // 이미지의 새로운 크기 계산
-    const newWidth = img.width * scaleFactor;
-    const newHeight = img.height * scaleFactor;
-  
-    // 이미지의 크기를 조정할 필요가 있는 경우에만 실행
-    if (newWidth > boxWidth || newHeight > boxHeight) {
-      const scale = Math.min(boxWidth / newWidth, boxHeight / newHeight);
-      const adjustedWidth = newWidth * scale;
-      const adjustedHeight = newHeight * scale;
-  
-      img.width(adjustedWidth);
-      img.height(adjustedHeight);
-    }
-  
-    // 이미지를 박스 가운데로 위치시키기 위한 좌표 계산
-    const newX = (stageWidth - img.width()) / 2;
-    const newY = (stageHeight - img.height()) / 2;
-  
-    // 이미지의 위치 업데이트
-    img.position({ x: newX, y: newY });
-  
-    // 스테이지의 크기를 이미지에 맞게 업데이트
-    stage.width(img.width());
-    stage.height(img.height());
-  
-    // 스테이지를 다시 그려서 변경 사항을 반영
-    stage.draw();
+    // 텍스트 입력 초기화
+    setText("");
+  };
+
+  const handleSubmit = () => {
+    navigate("/user/imageselect");
+  };
+
+  const handleSelectImage = () => {
+    fileInputRef.current.click();
   };
 
   return (
@@ -156,12 +134,11 @@ const DrawingEditor = () => {
         justifyContent: "center",
       }}
     >
-      <input type="file" onChange={handleImageChange} style={{ marginBottom: '10px' }} />
 
       <div
         style={{
           width: "800px",
-          height: "800px",
+          height: "600px",
           border: "2px dashed gray",
           borderRadius: "5px",
           display: "flex",
@@ -173,33 +150,33 @@ const DrawingEditor = () => {
           backgroundColor: "rgba(255, 255, 255, 0.01)",
         }}
       >
-        <Stage
+    <Stage
+      width={800}
+      height={600}
+      onMouseDown={handleMouseDown}
+      onMousemove={handleMouseMove}
+      onMouseup={handleMouseUp}
+      ref={stageRef}
+    >
+      <Layer>
+        <Rect
           width={800}
-          height={800}
-          onMouseDown={handleMouseDown}
-          onMousemove={handleMouseMove}
-          onMouseup={handleMouseUp}
-          ref={stageRef}
-        >
-          <Layer>
-            <Rect
-              width={800}
-              height={800}
-              fill="rgba(255, 255, 255, 0.3)"
-              stroke="black"
-            />
+          height={600}
+          fill="rgba(255, 255, 255, 0.3)"
+          stroke="black"
+        />
 
-            {image && (
-              <Image
-                image={image}
-                x={(800 - image.width) / 2}
-                y={(800 - image.height) / 2}
-                ref={imageRef}
-                draggable={false}
-                onLoad={handleImageLoad}
-              />
-            )}
-            
+        {image && (
+          <Image
+          ref={imageRef}
+          draggable={false}
+          width={imageSize.width}
+          height={imageSize.height}
+          x={(800 - imageSize.width) / 2} // image X position for center
+          y={(600 - imageSize.height) / 2} // image Y position for center
+        />
+        )}
+
             {lines.map((line, index) => (
               <Line
                 key={index}
@@ -209,15 +186,115 @@ const DrawingEditor = () => {
                 tension={0.5}
                 lineCap="round"
                 globalCompositeOperation="source-over"
-                listening={false} // 이미지 위에서는 마우스 이벤트를 받지 않도록 설정
+                listening={false}
               />
             ))}
           </Layer>
         </Stage>
       </div>
 
-      <input type="text" value={text} onChange={handleTextChange} placeholder="텍스트 입력" />
-      <button onClick={saveDrawing}>저장하기</button>
+      <input
+        type="file"
+        onChange={handleImageChange}
+        style={{ display: "none" }}
+        ref={fileInputRef}
+      />
+<div
+  style={{
+    display: "flex",
+    justifyContent: "space-around",
+    alignItems: "center",
+    marginBottom: "20px",
+    width: "890px", 
+  }}
+>
+  <button
+    type="button"
+    onClick={handleSelectImage}
+    style={{
+      width: "180px",
+      height: "50px",
+      borderRadius: "40px",
+      backgroundColor: "#654BFF",
+      color: "white",
+      border: "none",
+      cursor: "pointer",
+      fontSize: "18px",
+      fontFamily: "AppleSDGothicNeoB",
+      padding: "5px",
+      textAlign: "center",
+    }}
+  >
+    이미지 선택
+  </button>
+  <div style={{ position: "relative", width: "480px" }}>
+    <input
+      type="text"
+      value={text}
+      onChange={handleTextChange}
+      placeholder="   원하는 "
+      style={{
+        width: "100%",
+        height: "40px",
+        borderRadius: "40px",
+        border: "none",
+        outline: "none",
+        padding: "5px",
+        fontSize: "18px",
+        fontFamily: "AppleSDGothicNeoB",
+      }}
+    />
+{image && (
+  <button
+  onClick={handleTextSave}
+  style={{
+    position: "absolute",
+    top: "50%",
+    right: "10px",
+    transform: "translateY(-50%)",
+    width: "40px",
+    height: "40px",
+    border: "none",
+    backgroundColor: "transparent",
+    cursor: "pointer",
+  }}
+>
+  <img
+    src={EnterImage} // 이 부분에 이미지 경로를 넣어주셔야 합니다.
+    alt="Save"
+    style={{
+      display: "block",
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+      borderRadius: "40px",
+    }}
+  />
+</button>
+
+    )}
+  </div>
+  <button
+    onClick={handleSubmit}
+    style={{
+      width: "180px",
+      height: "50px",
+      borderRadius: "40px",
+      backgroundColor: "#654BFF",
+      color: "white",
+      border: "none",
+      cursor: "pointer",
+      fontSize: "18px",
+      fontFamily: "AppleSDGothicNeoB",
+      padding: "5px",
+      textAlign: "center",
+    }}
+  >
+    선택 완료
+  </button>
+</div>
+
+
     </div>
   );
 };

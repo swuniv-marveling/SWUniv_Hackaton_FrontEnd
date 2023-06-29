@@ -24,7 +24,8 @@ const ImageUpload = () => {
   };
 
   const handleSubmit = () => {
-    navigate("/user/imageselect"); // '/imageselect'로 이동
+    
+    navigate("/user/imageselect"); 
   };
 
   const handleSelectImage = () => {
