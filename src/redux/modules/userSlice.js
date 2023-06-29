@@ -1,21 +1,18 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-// import { API } from "../../global/Constants";
+import { API } from "../../global/Constants";
 
 const initialState = {
-  auth: false,
-  userId: 0,
+  access_token: "",
 };
 
 const __asyncLogin = createAsyncThunk(
   "userSlice/asyncLogin",
   async (payload) => {
     const result = await axios
-      // .post(API + "/user/login", payload)
-      .post("", payload)
+      .post(API + "/login", payload)
       .then((response) => {
-        localStorage.setItem("token", response.data.data);
-        return true;
+        return response.data.success;
       })
       .catch(() => false);
 
@@ -27,19 +24,20 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+    login: (state, payload) => {
+      state.access_token = payload.payload;
+    },
     logout: (state) => {
-      state.auth = false;
-      state.userId = 0;
+      state.access_token = "";
     },
   },
   extraReducers: (builder) => {
     builder.addCase(__asyncLogin.fulfilled, (state, payload) => {
-      state.auth = payload.payload.auth;
-      state.userId = payload.payload.userId;
+      // state.access_token = payload.payload.access_token;
     });
   },
 });
 
 export default userSlice;
-export const { logout } = userSlice.actions;
+export const { login, logout } = userSlice.actions;
 export { __asyncLogin };

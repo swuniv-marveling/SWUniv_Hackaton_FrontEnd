@@ -34,11 +34,11 @@ const StyledButton = styled.button`
 function Contents() {
   return (
     <StyledContents>
-      <StyledTitle>간편한 콘텐츠 현지화</StyledTitle>
+      <StyledTitle>이미지 현지화</StyledTitle>
       <StyledExplain>
-        사진을 업로드하시면 뭐 어쩌구를 통해
+        내 사진 현지화를 통해
         <br />
-        현지화를 만들어 새로운 이미지로!
+        새로운 이미지로!
       </StyledExplain>
       <StyledButton>{`이미지 업로드 >>`}</StyledButton>
     </StyledContents>

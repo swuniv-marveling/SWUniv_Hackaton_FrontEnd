@@ -1,12 +1,10 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { styled } from "styled-components";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { login } from "../../redux/modules/userSlice";
 import { API } from "../../global/Constants";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const StyledLogin = styled.div`
+const StyledSingup = styled.div`
   text-align: center;
 `;
 
@@ -41,34 +39,32 @@ const StyledSubmit = styled.button`
   border-radius: 10px;
 `;
 
-const StyledSignup = styled.div`
+const StyledLogin = styled.div`
   font-size: 18px;
   margin-top: 30px;
 `;
 
-function LoginForm() {
+function SignupForm() {
   const navigation = useNavigate();
-  const dispatch = useDispatch();
   const [userInfo, setUserInfo] = useState({ id: "", password: "" });
 
   const submitHandler = (e) => {
     e.preventDefault();
 
     axios
-      .post(API + "/login", userInfo)
+      .post(API + "/register", userInfo)
       .then((response) => {
-        if (response.data.access_token) {
-          alert("안녕하세요.");
-          dispatch(login(response.data.access_token));
-          navigation("/", { replace: true });
+        if (response.data.success) {
+          alert("회원가입 완료");
+          navigation("/login", { replace: true });
         } else alert("다시 시도해주세요.");
       })
       .catch(() => alert("다시 시도해주세요."));
   };
 
   return (
-    <StyledLogin>
-      <StyledTitle>LOGIN</StyledTitle>
+    <StyledSingup>
+      <StyledTitle>SIGN UP</StyledTitle>
       <form onSubmit={submitHandler}>
         <StyledInput
           type="text"
@@ -88,13 +84,13 @@ function LoginForm() {
           }}
         />
         <br />
-        <StyledSubmit type="submut">Login</StyledSubmit>
+        <StyledSubmit type="submut">Sign up</StyledSubmit>
       </form>
-      <StyledSignup onClick={() => navigation("/signup", { replace: true })}>
-        {"Sign up >>"}
-      </StyledSignup>
-    </StyledLogin>
+      <StyledLogin onClick={() => navigation("/login", { replace: true })}>
+        {"Login >>"}
+      </StyledLogin>
+    </StyledSingup>
   );
 }
 
-export default LoginForm;
+export default SignupForm;
