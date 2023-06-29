@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router";
 import { styled } from "styled-components";
 
 const StyledContents = styled.div`
@@ -30,6 +31,8 @@ const StyledButton = styled.button`
 `;
 
 function Contents() {
+  const navigation = useNavigate();
+
   return (
     <StyledContents>
       <StyledTitle className="font-bold">이미지 현지화</StyledTitle>
@@ -38,7 +41,10 @@ function Contents() {
         <br />
         새로운 이미지로!
       </StyledExplain>
-      <StyledButton className="font-bold">{`이미지 업로드 >>`}</StyledButton>
+      <StyledButton
+        className="font-bold"
+        onClick={() => navigation("/user/imageinput")}
+      >{`이미지 업로드 >>`}</StyledButton>
     </StyledContents>
   );
 }

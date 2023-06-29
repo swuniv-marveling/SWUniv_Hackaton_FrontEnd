@@ -36,11 +36,13 @@ const StyledSubmit = styled.button`
   background-color: #f9fbfd;
   color: #000011;
   border-radius: 10px;
+  cursor: pointer;
 `;
 
 const StyledLogin = styled.div`
   font-size: 18px;
   margin-top: 30px;
+  cursor: pointer;
 `;
 
 function SignupForm() {
