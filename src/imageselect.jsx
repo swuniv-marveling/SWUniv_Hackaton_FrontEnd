@@ -1,27 +1,53 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Stage, Layer, Rect, Image, Line } from "react-konva";
-import EnterImage from "./assets/images/Enter.png";
-import { __asyncLogin } from "./redux/modules/userSlice";
 import axios from "axios";
 import { API } from "./global/Constants";
+import { Loading } from "./components/Layout/Loading";
+import { styled } from "styled-components";
+import { LuDownload } from "react-icons/lu";
+import { BsTrash3 } from "react-icons/bs";
+
+const StyledButtonGroup = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+`;
+
+const StyledButton = styled.div`
+  cursor: pointer;
+  font-size: 24px;
+`;
+
+const StyledTitle = styled.div`
+  font-size: 20px;
+  margin-bottom: 10px;
+`;
+
+const StyledLocal = styled.div`
+  width: 40%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 30px auto;
+`;
 
 const DrawingEditor = () => {
   const [image, setImage] = useState(null);
   const [lines, setLines] = useState([]);
   const [text, setText] = useState("");
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
-  const [workList, setWorkList] = useState([]);
   const isDrawing = useRef(false);
   const stageRef = useRef(null);
   const imageRef = useRef(null);
   const fileInputRef = useRef(null);
   const [inputImage, setInputImage] = useState(undefined);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const navigation = useNavigate();
   const token = useSelector((state) => state.user.access_token);
-  const [line_color, setLine_color] = useState("white");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(false);
+  const [resultInfo, setResultInfo] = useState({});
 
   const isWithinImage = (x, y) => {
     if (!image) return false;
@@ -112,35 +138,10 @@ const DrawingEditor = () => {
     setText(event.target.value);
   };
 
-  const handleTextSave = async () => {
-    const textToSend = text;
-
-    try {
-      const response = await axios.post(
-        API + "/work",
-        { prompt: textToSend },
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      );
-
-      setWorkList(response.data.work_list);
-
-      setText("");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   async function handleSubmit() {
-    setLine_color("rgba(0,0,0,0)");
-    // return;
     // Convert stage (drawing + image) to data URL
     const dataUrl = stageRef.current.toDataURL();
-    console.log(dataUrl);
-    // return;
+
     const byteString = atob(dataUrl.split(",")[1]);
 
     const ab = new ArrayBuffer(byteString.length);
@@ -155,9 +156,6 @@ const DrawingEditor = () => {
       type: "image/png",
     });
 
-    console.log(inputImage);
-    console.log(URL.createObjectURL(blob));
-
     const formData = new FormData();
     formData.append("prompt", text);
     formData.append(
@@ -166,12 +164,7 @@ const DrawingEditor = () => {
     );
     formData.append("mask", file || null);
 
-    for (const a of formData.values()) {
-      console.log(a);
-    }
-
-    // console.log(document.getElementById("Input__Image").files[0]);
-    // console.log(file);
+    setLoading(true);
 
     axios
       .post(API + "/work", formData, {
@@ -189,9 +182,11 @@ const DrawingEditor = () => {
           })
           .then((response) => {
             console.log(response);
-            // setWorkList(response.data.work_list);
+            setResult(true);
+            setResultInfo(response.data.work);
           })
-          .catch((err) => console.log(err));
+          .catch((err) => console.log(err))
+          .then(() => setLoading(false));
       })
       .catch((err) => {
         console.log(err);
@@ -202,178 +197,218 @@ const DrawingEditor = () => {
     fileInputRef.current.click();
   };
 
-  return (
-    <div
-      style={{
-        backgroundColor: "transparent",
-        color: "white",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
+  const downloadImage = () => {
+    let image = new window.Image();
+    image.setAttribute("crossOrigin", "anonymous");
+
+    image.onload = function () {
+      let canvas = document.createElement("canvas");
+      canvas.width = image.width;
+      canvas.height = image.height;
+
+      let context = canvas.getContext("2d");
+      context.drawImage(image, 0, 0);
+
+      let link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = "My_image.png";
+      link.click();
+    };
+
+    image.src = resultInfo.output_url;
+  };
+
+  const deleteHandler = () => {
+    axios
+      .delete(API + "/work/delete/" + resultInfo.work_id, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        setResult(false);
+        setText("");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  if (result) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "40px" }}>
+        <img
+          src={resultInfo.output_url}
+          alt="result"
+          style={{ width: "40%" }}
+        />
+        <StyledLocal>
+          <StyledTitle
+            onClick={() => {
+              setResult(false);
+              setText("");
+            }}
+          >
+            새로운 이미지
+          </StyledTitle>
+          <StyledButtonGroup>
+            <StyledButton>
+              <BsTrash3 onClick={deleteHandler} />
+            </StyledButton>
+            <StyledButton>
+              <LuDownload onClick={downloadImage} />
+            </StyledButton>
+          </StyledButtonGroup>
+        </StyledLocal>
+      </div>
+    );
+  } else {
+    return (
       <div
         style={{
-          width: "800px",
-          height: "800px",
-          borderRadius: "5px",
+          backgroundColor: "transparent",
+          color: "white",
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          margin: "20px 0",
-          position: "relative",
-          overflow: "hidden",
-          backgroundColor: "rgba(255, 255, 255, 0.01)",
         }}
       >
-        <Stage
-          width={1024}
-          height={1024}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          ref={stageRef}
-        >
-          <Layer>
-            <Rect
-              width={1024}
-              height={1024}
-              fill="rgba(71,71,105,1)"
-              stroke="black"
-            />
-
-            {image && (
-              <Image
-                id="modify__Image"
-                ref={imageRef}
-                draggable={false}
-                width={imageSize.width}
-                height={imageSize.height}
-                x={(1024 - imageSize.width) / 2} // image X position for center
-                y={(1024 - imageSize.height) / 2} // image Y position for center
-              />
-            )}
-
-            {lines.map((line, index) => (
-              <Line
-                key={index}
-                points={line.points}
-                stroke={line_color}
-                strokeWidth={30}
-                tension={0.5}
-                lineCap="round"
-                globalCompositeOperation="source-over"
-                listening={false}
-              />
-            ))}
-          </Layer>
-        </Stage>
-      </div>
-
-      <input
-        id="Input__Image"
-        type="file"
-        onChange={handleImageChange}
-        style={{ display: "none" }}
-        ref={fileInputRef}
-      />
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          alignItems: "center",
-          marginBottom: "20px",
-          width: "890px",
-        }}
-      >
-        <button
-          type="button"
-          onClick={handleSelectImage}
+        <input
+          id="Input__Image"
+          type="file"
+          onChange={handleImageChange}
+          style={{ display: "none" }}
+          ref={fileInputRef}
+        />
+        <div
           style={{
-            width: "180px",
-            height: "50px",
-            borderRadius: "40px",
-            backgroundColor: "#654BFF",
-            color: "white",
-            border: "none",
-            cursor: "pointer",
-            fontSize: "18px",
-            fontFamily: "AppleSDGothicNeoB",
-            padding: "5px",
-            textAlign: "center",
+            display: "flex",
+            justifyContent: "space-around",
+            alignItems: "center",
+            marginBottom: "20px",
+            width: "890px",
           }}
         >
-          이미지 선택
-        </button>
-        <div style={{ position: "relative", width: "480px" }}>
-          <input
-            type="text"
-            value={text}
-            onChange={handleTextChange}
-            placeholder="   원하는 결과를 입력하세요. "
+          <button
+            type="button"
+            onClick={handleSelectImage}
             style={{
-              width: "96%",
-              height: "40px",
+              width: "180px",
+              height: "50px",
               borderRadius: "40px",
-              paddingLeft: "10px",
+              backgroundColor: "#654BFF",
+              color: "white",
               border: "none",
-              outline: "none",
-              padding: "5px",
+              cursor: "pointer",
               fontSize: "18px",
               fontFamily: "AppleSDGothicNeoB",
+              padding: "5px",
+              textAlign: "center",
             }}
-          />
-          {image && (
-            <button
-              onClick={handleTextSave}
+          >
+            이미지 선택
+          </button>
+          <div style={{ position: "relative", width: "480px" }}>
+            <input
+              type="text"
+              value={text}
+              onChange={handleTextChange}
+              placeholder="    원하는 컨셉을 입력하세요."
               style={{
-                position: "absolute",
-                top: "50%",
-                right: "10px",
-                transform: "translateY(-50%)",
-                width: "40px",
+                width: "98%",
                 height: "40px",
+                borderRadius: "40px",
+                paddingLeft: "10px",
                 border: "none",
-                backgroundColor: "transparent",
-                cursor: "pointer",
+                outline: "none",
+                padding: "5px",
+                fontSize: "18px",
+                fontFamily: "AppleSDGothicNeoB",
               }}
-            >
-              <img
-                src={EnterImage}
-                alt="Save"
-                style={{
-                  display: "block",
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  borderRadius: "40px",
-                }}
-              />
-            </button>
-          )}
+            />
+          </div>
+          <button
+            onClick={handleSubmit}
+            style={{
+              width: "180px",
+              height: "50px",
+              borderRadius: "40px",
+              backgroundColor: "#654BFF",
+              color: "white",
+              border: "none",
+              cursor: "pointer",
+              fontSize: "18px",
+              fontFamily: "AppleSDGothicNeoB",
+              padding: "5px",
+              textAlign: "center",
+            }}
+          >
+            선택 완료
+          </button>
         </div>
-        <button
-          onClick={handleSubmit}
+        {loading && <Loading />}
+        <div
           style={{
-            width: "180px",
-            height: "50px",
-            borderRadius: "40px",
-            backgroundColor: "#654BFF",
-            color: "white",
-            border: "none",
-            cursor: "pointer",
-            fontSize: "18px",
-            fontFamily: "AppleSDGothicNeoB",
-            padding: "5px",
-            textAlign: "center",
+            width: "800px",
+            height: "800px",
+            borderRadius: "5px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            margin: "20px 0",
+            position: "relative",
+            overflow: "hidden",
+            backgroundColor: "rgba(255, 255, 255, 0.01)",
           }}
         >
-          선택 완료
-        </button>
+          <Stage
+            width={1024}
+            height={1024}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            ref={stageRef}
+          >
+            <Layer>
+              <Rect
+                width={1024}
+                height={1024}
+                fill="rgba(0,0,0,0)"
+                stroke="black"
+              />
+
+              {image && (
+                <Image
+                  id="modify__Image"
+                  ref={imageRef}
+                  draggable={false}
+                  width={imageSize.width}
+                  height={imageSize.height}
+                  x={(1024 - imageSize.width) / 2} // image X position for center
+                  y={(1024 - imageSize.height) / 2} // image Y position for center
+                />
+              )}
+
+              {lines.map((line, index) => (
+                <Line
+                  key={index}
+                  points={line.points}
+                  stroke="white"
+                  strokeWidth={30}
+                  tension={0.5}
+                  lineCap="round"
+                  globalCompositeOperation="destination-out"
+                  listening={false}
+                />
+              ))}
+            </Layer>
+          </Stage>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 };
 
 export default DrawingEditor;
