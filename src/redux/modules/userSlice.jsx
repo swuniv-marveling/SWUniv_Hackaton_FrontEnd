@@ -4,6 +4,7 @@ import { API } from "../../global/Constants";
 
 const initialState = {
   access_token: "",
+  name: "",
 };
 
 const __asyncLogin = createAsyncThunk(
@@ -25,10 +26,12 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     login: (state, payload) => {
-      state.access_token = payload.payload;
+      state.access_token = payload.payload.access_token;
+      state.name = payload.payload.name;
     },
     logout: (state) => {
       state.access_token = "";
+      state.name = "";
     },
   },
   extraReducers: (builder) => {

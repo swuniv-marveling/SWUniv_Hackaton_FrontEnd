@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const StyledHeader = styled.div`
@@ -9,6 +9,7 @@ const StyledHeader = styled.div`
   justify-content: space-between;
   padding: 30px 0;
   top: 0;
+  z-index: 10;
 `;
 
 const StyledLogo = styled.div`
@@ -23,17 +24,42 @@ const StyledButton = styled.div`
   z-index: 10;
 `;
 
+const StyledButtonGroup = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 3rem;
+  z-index: 10;
+`;
+
 function Header() {
   const navigation = useNavigate();
+  const location = useLocation();
   const user = useSelector((state) => state.user);
 
   return (
     <StyledHeader>
       <StyledLogo onClick={() => navigation("/")}>Loca</StyledLogo>
-      {!user.access_token ? (
-        <StyledButton onClick={() => navigation("/login")}>LOGIN</StyledButton>
-      ) : (
-        <StyledButton onClick={() => navigation("/my")}>MY</StyledButton>
+      {!(location.pathname === "/login" || location.pathname === "/signup") && (
+        <StyledButtonGroup>
+          {user.access_token && location.pathname !== "/every" ? (
+            <StyledButton onClick={() => navigation("/every")}>
+              사진첩
+            </StyledButton>
+          ) : (
+            <></>
+          )}
+          {location.pathname === "/gallery" ? (
+            <></>
+          ) : !user.access_token ? (
+            <StyledButton onClick={() => navigation("/login")}>
+              LOGIN
+            </StyledButton>
+          ) : (
+            <StyledButton onClick={() => navigation("/gallery")}>
+              MY
+            </StyledButton>
+          )}
+        </StyledButtonGroup>
       )}
     </StyledHeader>
   );
