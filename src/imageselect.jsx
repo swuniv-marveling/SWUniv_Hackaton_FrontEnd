@@ -3,25 +3,25 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Stage, Layer, Rect, Image, Line } from "react-konva";
 import EnterImage from "./assets/images/Enter.png";
-import { __asyncLogin } from "./redux/modules/userSlice"; 
+import { __asyncLogin } from "./redux/modules/userSlice";
 import axios from "axios";
 import { API } from "./global/Constants";
-
 
 const DrawingEditor = () => {
   const [image, setImage] = useState(null);
   const [lines, setLines] = useState([]);
   const [text, setText] = useState("");
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
-  const [workList, setWorkList] = useState([]); 
+  const [workList, setWorkList] = useState([]);
   const isDrawing = useRef(false);
   const stageRef = useRef(null);
   const imageRef = useRef(null);
   const fileInputRef = useRef(null);
+  const [inputImage, setInputImage] = useState(undefined);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = useSelector((state) => state.user.access_token);
-
+  const [line_color, setLine_color] = useState("white");
 
   const isWithinImage = (x, y) => {
     if (!image) return false;
@@ -32,10 +32,7 @@ const DrawingEditor = () => {
     const imgHeight = imageRef.current.height();
 
     return (
-      x >= imgX &&
-      x <= imgX + imgWidth &&
-      y >= imgY &&
-      y <= imgY + imgHeight
+      x >= imgX && x <= imgX + imgWidth && y >= imgY && y <= imgY + imgHeight
     );
   };
 
@@ -64,23 +61,23 @@ const DrawingEditor = () => {
     const file = event.target.files[0];
     const reader = new FileReader();
 
+    setInputImage(URL.createObjectURL(file));
+
     reader.onload = (e) => {
       setImage(e.target.result);
 
-     
       const tempImg = new window.Image();
       tempImg.onload = () => {
         const aspectRatio = tempImg.width / tempImg.height;
         let imgWidth, imgHeight;
 
         if (tempImg.width > tempImg.height) {
-          imgWidth = 800;
+          imgWidth = 1024;
           imgHeight = imgWidth / aspectRatio;
         } else {
-          imgHeight = 800;
+          imgHeight = 1024;
           imgWidth = imgHeight * aspectRatio;
         }
-
 
         setImageSize({ width: imgWidth, height: imgHeight });
       };
@@ -116,50 +113,89 @@ const DrawingEditor = () => {
   };
 
   const handleTextSave = async () => {
-
     const textToSend = text;
 
     try {
       const response = await axios.post(
         API + "/work",
-        { "prompt": textToSend  },
+        { prompt: textToSend },
         {
           headers: {
             Authorization: "Bearer " + token,
           },
         }
       );
-      
-      setWorkList(response.data.work_list); 
 
+      setWorkList(response.data.work_list);
 
       setText("");
     } catch (error) {
-
       console.log(error);
     }
   };
 
-
-
   async function handleSubmit() {
-  
-    const textToSend = text;
+    setLine_color("rgba(0,0,0,0)");
+    // return;
+    // Convert stage (drawing + image) to data URL
+    const dataUrl = stageRef.current.toDataURL();
+    console.log(dataUrl);
+    // return;
+    const byteString = atob(dataUrl.split(",")[1]);
 
-    try {
-      const response = await dispatch(__asyncLogin({ text: textToSend }));
-
-      if (response.payload) {
-        
-        console.log(response.payload);
-      } else {
-       
-        console.log("Request failed");
-      }
-    } catch (error) {
-      
-      console.log(error);
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
     }
+    const blob = new Blob([ia], {
+      type: "image/png",
+    });
+    const file = new File([blob], "image.png", {
+      type: "image/png",
+    });
+
+    console.log(inputImage);
+    console.log(URL.createObjectURL(blob));
+
+    const formData = new FormData();
+    formData.append("prompt", text);
+    formData.append(
+      "input",
+      document.getElementById("Input__Image").files[0] || null
+    );
+    formData.append("mask", file || null);
+
+    for (const a of formData.values()) {
+      console.log(a);
+    }
+
+    // console.log(document.getElementById("Input__Image").files[0]);
+    // console.log(file);
+
+    axios
+      .post(API + "/work", formData, {
+        headers: {
+          "Contest-Type": "multipart/form-data",
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then((response) => {
+        axios
+          .get(API + "/work/" + response.data.id, {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          })
+          .then((response) => {
+            console.log(response);
+            // setWorkList(response.data.work_list);
+          })
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   const handleSelectImage = () => {
@@ -192,8 +228,8 @@ const DrawingEditor = () => {
         }}
       >
         <Stage
-          width={800}
-          height={800}
+          width={1024}
+          height={1024}
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
@@ -201,20 +237,21 @@ const DrawingEditor = () => {
         >
           <Layer>
             <Rect
-              width={800}
-              height={800}
+              width={1024}
+              height={1024}
               fill="rgba(71,71,105,1)"
               stroke="black"
             />
 
             {image && (
               <Image
+                id="modify__Image"
                 ref={imageRef}
                 draggable={false}
                 width={imageSize.width}
                 height={imageSize.height}
-                x={(800 - imageSize.width) / 2} // image X position for center
-                y={(600 - imageSize.height) / 2} // image Y position for center
+                x={(1024 - imageSize.width) / 2} // image X position for center
+                y={(1024 - imageSize.height) / 2} // image Y position for center
               />
             )}
 
@@ -222,7 +259,7 @@ const DrawingEditor = () => {
               <Line
                 key={index}
                 points={line.points}
-                stroke="white"
+                stroke={line_color}
                 strokeWidth={30}
                 tension={0.5}
                 lineCap="round"
@@ -235,6 +272,7 @@ const DrawingEditor = () => {
       </div>
 
       <input
+        id="Input__Image"
         type="file"
         onChange={handleImageChange}
         style={{ display: "none" }}
@@ -302,7 +340,7 @@ const DrawingEditor = () => {
               }}
             >
               <img
-                src={EnterImage} 
+                src={EnterImage}
                 alt="Save"
                 style={{
                   display: "block",
