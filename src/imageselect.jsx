@@ -9,10 +9,28 @@ const DrawingEditor = () => {
   const stageRef = useRef(null);
   const imageRef = useRef(null);
 
+
   const saveDrawing = () => {
+    // 그림 데이터와 텍스트를 백엔드로 전송
+    const payload = {
+      lines: lines,
+      prompt: text, // 백엔드에 'prompt'라는 변수로 텍스트 전송
+    };
+
+    fetch('http://your-backend-server.com/api/save-drawing', { // 백엔드 API endpoint, 수정 필요
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error('Error:', error));
+
     console.log('그림 저장:', lines, text);
-    // TODO: 백엔드로 그림 데이터와 텍스트 전송
   };
+
   //마우스 위치가 이미지 내부인지 확인하는 함수
   const isWithinImage = (x, y) => {
     if (!image) return false;
@@ -161,7 +179,6 @@ const DrawingEditor = () => {
           />
           )}
           
-
           {lines.map((line, index) => (
             <Line
               key={index}
@@ -174,16 +191,6 @@ const DrawingEditor = () => {
               listening={false} // 이미지 위에서는 마우스 이벤트를 받지 않도록 설정
             />
           ))}
-
-          <Text
-            text={text}
-            x={window.innerWidth / 2}
-            y={window.innerHeight / 2}
-            fontSize={30}
-            fill="white"
-            align="center"
-            listening={false} // 이미지 위에서는 마우스 이벤트를 받지 않도록 설정
-          />
         </Layer>
       </Stage>
 
