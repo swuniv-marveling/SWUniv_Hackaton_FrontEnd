@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const StyledHeader = styled.div`
@@ -25,15 +25,18 @@ const StyledButton = styled.div`
 
 function Header() {
   const navigation = useNavigate();
+  const location = useLocation();
   const user = useSelector((state) => state.user);
 
   return (
     <StyledHeader>
       <StyledLogo onClick={() => navigation("/")}>Loca</StyledLogo>
-      {!user.access_token ? (
+      {location.pathname === "/gallery" ? (
+        <></>
+      ) : !user.access_token ? (
         <StyledButton onClick={() => navigation("/login")}>LOGIN</StyledButton>
       ) : (
-        <StyledButton onClick={() => navigation("/my")}>MY</StyledButton>
+        <StyledButton onClick={() => navigation("/gallery")}>MY</StyledButton>
       )}
     </StyledHeader>
   );
