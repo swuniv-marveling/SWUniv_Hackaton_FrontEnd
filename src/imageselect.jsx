@@ -122,7 +122,7 @@ const DrawingEditor = () => {
     try {
       const response = await axios.post(
         API + "/work",
-        { "prompt": textToSend,  },
+        { "prompt": textToSend  },
         {
           headers: {
             Authorization: "Bearer " + token,
