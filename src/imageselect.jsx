@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Stage, Layer, Image, Line, Text } from 'react-konva';
+import { Stage, Layer, Rect, Image, Line, Text } from 'react-konva';
 
 const DrawingEditor = () => {
   const [image, setImage] = useState(null);
@@ -26,6 +26,8 @@ const DrawingEditor = () => {
   };
 
   const handleMouseDown = (event) => {
+    if (!image) return; // 이미지가 없을 경우 그리기 작업 중지
+
     isDrawing.current = true;
 
     const { offsetX, offsetY } = event.evt;
@@ -67,7 +69,7 @@ const DrawingEditor = () => {
   return (
     <div>
       <h1>그림 그리기</h1>
-      <input type="file" onChange={handleImageChange} />
+      <input type="file" onChange={handleImageChange} style={{ marginBottom: '10px' }} />
 
       <Stage
         width={window.innerWidth}
@@ -78,13 +80,22 @@ const DrawingEditor = () => {
         ref={stageRef}
       >
         <Layer>
+          <Rect
+            x={(window.innerWidth - 2000) / 2}
+            y={(window.innerHeight - 800) / 2}
+            width={2000}
+            height={800}
+            fill="rgba(255, 255, 255, 0.3)"
+            stroke="black"
+          />
+
           {image && (
             <Image
               image={image}
-              width={image.width}
-              height={image.height}
+              x={(window.innerWidth - image.width) / 2}
+              y={(window.innerHeight - image.height) / 2}
               ref={imageRef}
-              onLoad={handleImageLoad}
+              draggable={false} // 이미지를 드래그할 수 없도록 설정
             />
           )}
 
@@ -97,6 +108,7 @@ const DrawingEditor = () => {
               tension={0.5}
               lineCap="round"
               globalCompositeOperation="source-over"
+              listening={false} // 이미지 위에서는 마우스 이벤트를 받지 않도록 설정
             />
           ))}
 
@@ -107,6 +119,7 @@ const DrawingEditor = () => {
             fontSize={30}
             fill="white"
             align="center"
+            listening={false} // 이미지 위에서는 마우스 이벤트를 받지 않도록 설정
           />
         </Layer>
       </Stage>
