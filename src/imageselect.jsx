@@ -1,18 +1,27 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Stage, Layer, Rect, Image, Line } from "react-konva";
 import EnterImage from "./assets/images/Enter.png";
+import { __asyncLogin } from "./redux/modules/userSlice"; 
+import axios from "axios";
+import { API } from "./global/Constants";
+
 
 const DrawingEditor = () => {
   const [image, setImage] = useState(null);
   const [lines, setLines] = useState([]);
   const [text, setText] = useState("");
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+  const [workList, setWorkList] = useState([]); 
   const isDrawing = useRef(false);
   const stageRef = useRef(null);
   const imageRef = useRef(null);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.user.access_token);
+
 
   const isWithinImage = (x, y) => {
     if (!image) return false;
@@ -58,7 +67,7 @@ const DrawingEditor = () => {
     reader.onload = (e) => {
       setImage(e.target.result);
 
-      // Create new image to get its size
+     
       const tempImg = new window.Image();
       tempImg.onload = () => {
         const aspectRatio = tempImg.width / tempImg.height;
@@ -72,7 +81,7 @@ const DrawingEditor = () => {
           imgWidth = imgHeight * aspectRatio;
         }
 
-        // Update image size state
+
         setImageSize({ width: imgWidth, height: imgHeight });
       };
       tempImg.src = e.target.result;
@@ -106,18 +115,52 @@ const DrawingEditor = () => {
     setText(event.target.value);
   };
 
-  const handleTextSave = () => {
-    // 텍스트를 백엔드로 보내는 로직 구현
+  const handleTextSave = async () => {
+
     const textToSend = text;
-    // 백엔드로 텍스트를 보내는 API 호출 또는 로직 구현
 
-    // 텍스트 입력 초기화
-    setText("");
+    try {
+      const response = await axios.post(
+        API + "/work",
+        { "prompt": textToSend,  },
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+      
+      setWorkList(response.data.work_list); 
+
+
+      setText("");
+    } catch (error) {
+
+      console.log(error);
+    }
   };
 
-  const handleSubmit = () => {
-    navigate("/user/imageselect");
-  };
+
+
+  async function handleSubmit() {
+  
+    const textToSend = text;
+
+    try {
+      const response = await dispatch(__asyncLogin({ text: textToSend }));
+
+      if (response.payload) {
+        
+        console.log(response.payload);
+      } else {
+       
+        console.log("Request failed");
+      }
+    } catch (error) {
+      
+      console.log(error);
+    }
+  }
 
   const handleSelectImage = () => {
     fileInputRef.current.click();
@@ -259,7 +302,7 @@ const DrawingEditor = () => {
               }}
             >
               <img
-                src={EnterImage} // 이 부분에 이미지 경로를 넣어주셔야 합니다.
+                src={EnterImage} 
                 alt="Save"
                 style={{
                   display: "block",
