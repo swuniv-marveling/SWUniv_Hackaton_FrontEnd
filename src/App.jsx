@@ -8,6 +8,7 @@ import SignupPage from "./pages/SignupPage";
 import ImageUpload from "./imageinput";
 import ImageSelect from "./imageselect";
 import GalleryPage from "./pages/GalleryPage";
+import AllGalleryPage from "./pages/AllGalleryPage";
 
 const StyledApp = styled.div`
   background-color: #000011;
@@ -27,6 +28,7 @@ function App() {
         <Route path="/user/imageinput" element={<ImageUpload />} />
         <Route path="/user/imageselect" element={<ImageSelect />} />
         <Route path="/gallery" element={<GalleryPage />} />
+        <Route path="/every" element={<AllGalleryPage />} />
       </Routes>
     </StyledApp>
   );

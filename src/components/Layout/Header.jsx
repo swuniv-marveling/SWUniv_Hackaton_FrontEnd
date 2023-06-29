@@ -39,9 +39,11 @@ function Header() {
       <StyledLogo onClick={() => navigation("/")}>Loca</StyledLogo>
       {!(location.pathname === "/login" || location.pathname === "/signup") && (
         <StyledButtonGroup>
-          <StyledButton onClick={() => navigation("/every")}>
-            사진첩
-          </StyledButton>
+          {user.access_token && (
+            <StyledButton onClick={() => navigation("/every")}>
+              사진첩
+            </StyledButton>
+          )}
           {location.pathname === "/gallery" ? (
             <></>
           ) : !user.access_token ? (

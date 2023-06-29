@@ -1,10 +1,6 @@
 import React from "react";
 import { styled } from "styled-components";
 import { LuDownload } from "react-icons/lu";
-import { BsTrash3 } from "react-icons/bs";
-import axios from "axios";
-import { API } from "../../global/Constants";
-import { useSelector } from "react-redux";
 
 const StyledTab = styled.div`
   position: fixed;
@@ -52,8 +48,6 @@ const StyledWidth50 = styled.div`
 `;
 
 function Tab(props) {
-  const user = useSelector((state) => state.user);
-
   const downloadImage = () => {
     var image = new Image();
     image.setAttribute("crossOrigin", "anonymous");
@@ -75,24 +69,6 @@ function Tab(props) {
     image.src = props.detailInfo.output_url;
   };
 
-  const deleteHandler = () => {
-    axios
-      .delete(API + "/work/delete/" + props.detailInfo.work_id, {
-        headers: {
-          Authorization: "Bearer " + user.access_token,
-        },
-      })
-      .then((response) => {
-        console.log(response);
-        props.setDetailInfo({});
-        props.setShowTab(false);
-        props.setReload(!props.reload);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
   if (props.showTab)
     return (
       <StyledTab>
@@ -100,9 +76,6 @@ function Tab(props) {
           <StyledLocal>
             <StyledTitle>현지화 이미지</StyledTitle>
             <StyledButtonGroup>
-              <StyledButton onClick={deleteHandler}>
-                <BsTrash3 />
-              </StyledButton>
               <StyledButton onClick={downloadImage}>
                 <LuDownload />
               </StyledButton>
