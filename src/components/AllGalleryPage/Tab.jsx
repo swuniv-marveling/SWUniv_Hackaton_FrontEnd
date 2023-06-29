@@ -11,7 +11,7 @@ const StyledTab = styled.div`
     -8px 0px 5px -2px rgb(71, 71, 105);
   width: 50vw;
   height: 100vh;
-  z-index: 20;
+  z-index: 5;
   overflow-y: scroll;
 `;
 

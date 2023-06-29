@@ -9,6 +9,7 @@ const StyledHeader = styled.div`
   justify-content: space-between;
   padding: 30px 0;
   top: 0;
+  z-index: 10;
 `;
 
 const StyledLogo = styled.div`
@@ -27,6 +28,7 @@ const StyledButtonGroup = styled.div`
   display: flex;
   flex-direction: row;
   gap: 3rem;
+  z-index: 10;
 `;
 
 function Header() {
@@ -39,10 +41,12 @@ function Header() {
       <StyledLogo onClick={() => navigation("/")}>Loca</StyledLogo>
       {!(location.pathname === "/login" || location.pathname === "/signup") && (
         <StyledButtonGroup>
-          {user.access_token && (
+          {user.access_token && location.pathname !== "/every" ? (
             <StyledButton onClick={() => navigation("/every")}>
               사진첩
             </StyledButton>
+          ) : (
+            <></>
           )}
           {location.pathname === "/gallery" ? (
             <></>
