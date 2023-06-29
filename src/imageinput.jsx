@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./index.css";
+import ImageSelect from "./imageselect";
 
 const ImageUpload = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -23,11 +24,7 @@ const ImageUpload = () => {
   };
 
   const handleSubmit = () => {
-    // 이미지 업로드 후 처리할 내용을 여기에 작성
-  };
-
-  const handleNavigate = () => {
-    navigate("/mypage"); // '/mypage'로 이동
+    navigate("/user/imageselect"); // '/imageselect'로 이동
   };
 
   const handleSelectImage = () => {
@@ -141,13 +138,32 @@ const ImageUpload = () => {
         <div
           style={{
             display: "flex",
-            justifyContent: "flex-end",
-            width: "1200px",
+            justifyContent: "space-between",
+            width: "800px",
           }}
         >
           <button
             type="button"
             onClick={handleRemoveImage}
+            style={{
+              width: "260px",
+              height: "50px",
+              borderRadius: "40px",
+              backgroundColor: "white",
+              color: "#654BFF",
+              border: "none",
+              cursor: "pointer",
+              fontSize: "30px",
+              fontFamily: "AppleSDGothicNeoB",
+              padding: "5px",
+              textAlign: "center",
+            }}
+          >
+            이미지 변경
+          </button>
+          <button
+            type="button"
+            onClick={handleSubmit}
             style={{
               width: "260px",
               height: "50px",
