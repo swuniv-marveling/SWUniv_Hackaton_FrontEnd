@@ -156,7 +156,6 @@ const DrawingEditor = () => {
         justifyContent: "center",
       }}
     >
-      <h1>그림 그리기</h1>
       <input type="file" onChange={handleImageChange} style={{ marginBottom: '10px' }} />
 
       <div
