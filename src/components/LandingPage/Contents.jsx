@@ -10,7 +10,6 @@ const StyledContents = styled.div`
 
 const StyledTitle = styled.div`
   font-size: 64px;
-  font-weight: bold;
   margin-top: 50px;
 `;
 const StyledExplain = styled.div`
@@ -26,7 +25,6 @@ const StyledButton = styled.button`
   margin-top: 20px;
   width: 259px;
   height: 52px;
-  font-weight: bold;
   font-size: 17px;
   cursor: pointer;
 `;
@@ -34,13 +32,13 @@ const StyledButton = styled.button`
 function Contents() {
   return (
     <StyledContents>
-      <StyledTitle>이미지 현지화</StyledTitle>
+      <StyledTitle className="font-bold">이미지 현지화</StyledTitle>
       <StyledExplain>
         내 사진 현지화를 통해
         <br />
         새로운 이미지로!
       </StyledExplain>
-      <StyledButton>{`이미지 업로드 >>`}</StyledButton>
+      <StyledButton className="font-bold">{`이미지 업로드 >>`}</StyledButton>
     </StyledContents>
   );
 }

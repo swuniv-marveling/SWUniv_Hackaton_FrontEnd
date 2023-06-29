@@ -12,7 +12,6 @@ const StyledLogin = styled.div`
 
 const StyledTitle = styled.div`
   font-size: 48px;
-  font-weight: bold;
   margin-bottom: 25px;
 `;
 
@@ -68,7 +67,7 @@ function LoginForm() {
 
   return (
     <StyledLogin>
-      <StyledTitle>LOGIN</StyledTitle>
+      <StyledTitle className="font-bold">LOGIN</StyledTitle>
       <form onSubmit={submitHandler}>
         <StyledInput
           type="text"

@@ -10,7 +10,6 @@ const StyledSingup = styled.div`
 
 const StyledTitle = styled.div`
   font-size: 48px;
-  font-weight: bold;
   margin-bottom: 25px;
 `;
 
@@ -64,7 +63,7 @@ function SignupForm() {
 
   return (
     <StyledSingup>
-      <StyledTitle>SIGN UP</StyledTitle>
+      <StyledTitle className="font-bold">SIGN UP</StyledTitle>
       <form onSubmit={submitHandler}>
         <StyledInput
           type="text"

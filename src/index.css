@@ -1,3 +1,17 @@
+@font-face {
+  font-family: "AppleSDGothicNeoB";
+  src: url("../src//assets/font/AppleSDGothicNeoB.ttf") format("truetype");
+}
+@font-face {
+  font-family: "AppleSDGothicNeoM";
+  src: url("../src//assets/font/AppleSDGothicNeoM.ttf") format("truetype");
+}
+
 body {
   margin: 0;
+  font-family: "AppleSDGothicNeoM";
+}
+
+.font-bold {
+  font-family: "AppleSDGothicNeoB";
 }
