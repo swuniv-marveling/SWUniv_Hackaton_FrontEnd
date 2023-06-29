@@ -5,7 +5,6 @@ import LandingPage from "./pages/LandingPage";
 import Header from "./components/Layout/Header";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
-import ImageUpload from "./imageinput";
 import ImageSelect from "./imageselect";
 import GalleryPage from "./pages/GalleryPage";
 import AllGalleryPage from "./pages/AllGalleryPage";
@@ -25,7 +24,6 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        <Route path="/user/imageinput" element={<ImageUpload />} />
         <Route path="/user/imageselect" element={<ImageSelect />} />
         <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/every" element={<AllGalleryPage />} />

@@ -43,7 +43,7 @@ function Contents() {
       </StyledExplain>
       <StyledButton
         className="font-bold"
-        onClick={() => navigation("/user/imageinput")}
+        onClick={() => navigation("/user/imageselect")}
       >{`이미지 업로드 >>`}</StyledButton>
     </StyledContents>
   );
