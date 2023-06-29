@@ -73,25 +73,36 @@ const ImageUpload = () => {
           )}
         </label>
         {selectedImage && (
-          <div>
-            <img
-              src={selectedImage}
-              alt="Preview"
+          <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+            <div
               style={{
                 position: 'absolute',
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
-            />
+            >
+              <img
+                src={selectedImage}
+                alt="Preview"
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '100%',
+                }}
+              />
+            </div>
           </div>
         )}
-        {selectedImage && (
-          <button type="button" onClick={handleRemoveImage}>
-            이미지 변경
-          </button>
-        )}
       </div>
+      {selectedImage && (
+        <button type="button" onClick={handleRemoveImage}>
+          이미지 변경
+        </button>
+      )}
     </div>
   );
 };
