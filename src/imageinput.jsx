@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const ImageUpload = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -20,9 +21,17 @@ const ImageUpload = () => {
     event.preventDefault();
   };
 
-  const handleSubmit=()=>{
-    //업로드하고나서 나중에 처리되는 함수 여기다가쓰면돼
-  }
+  const handleSubmit = () => {
+    // 이미지 업로드 후 처리할 내용을 여기에 작성
+  };
+
+  const handleNavigate = () => {
+    navigate('/mypage'); // '/mypage'로 이동
+  };
+
+  const handleSelectImage = () => {
+    fileInputRef.current.click();
+  };
 
   return (
     <div>
@@ -39,25 +48,39 @@ const ImageUpload = () => {
           alignItems: 'center',
           justifyContent: 'center',
           margin: '20px 0',
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
         <input
           type="file"
           onChange={handleImageChange}
           style={{ display: 'none' }}
-          id="file-input"
+          ref={fileInputRef}
         />
         <label htmlFor="file-input">
-          <p>이미지를 여기로 드래그 앤 드롭하거나 선택하세요.</p>
-          <button type="button">이미지 선택</button>
+          {!selectedImage && (
+            <p>이미지를 여기로 드래그 앤 드롭하거나 선택하세요.</p>
+          )}
+          {!selectedImage && (
+            <button type="button" onClick={handleSelectImage}>
+              이미지 선택
+            </button>
+          )}
         </label>
+        {selectedImage && (
+          <img
+            src={selectedImage}
+            alt="Preview"
+            style={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+          />
+        )}
       </div>
-      {selectedImage && (
-        <div>
-          <h2>사진 미리보기</h2>
-          <img src={selectedImage} alt="Preview" style={{ width: '300px' }} />
-        </div>
-      )}
     </div>
   );
 };
