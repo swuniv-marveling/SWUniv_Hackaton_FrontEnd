@@ -15,3 +15,11 @@ body {
 .font-bold {
   font-family: "AppleSDGothicNeoB";
 }
+
+.inputIcon {
+  position: absolute;
+  top: 32px;
+  left: 20px;
+  margin: 0;
+  color: #f9fbfd;
+}

@@ -5,6 +5,8 @@ import { useDispatch } from "react-redux";
 import { login } from "../../redux/modules/userSlice";
 import { API } from "../../global/Constants";
 import axios from "axios";
+import { IoPerson } from "react-icons/io5";
+import { BiSolidLockAlt } from "react-icons/bi";
 
 const StyledLogin = styled.div`
   text-align: center;
@@ -15,8 +17,14 @@ const StyledTitle = styled.div`
   margin: 50px 0 70px 0;
 `;
 
-const StyledInput = styled.input`
+const StyledInputDiv = styled.div`
   width: 480px;
+  position: relative;
+  margin: 0 auto;
+`;
+
+const StyledInput = styled.input`
+  width: 100%;
   font-size: 24px;
   background-color: transparent;
   border: 0;
@@ -72,24 +80,28 @@ function LoginForm() {
     <StyledLogin>
       <StyledTitle className="font-bold">5초만에 로그인하기</StyledTitle>
       <form onSubmit={submitHandler}>
-        <StyledInput
-          type="text"
-          placeholder="id"
-          value={userInfo.id}
-          onChange={(e) => {
-            setUserInfo({ ...userInfo, id: e.target.value });
-          }}
-        />
-        <br />
-        <StyledInput
-          type="password"
-          placeholder="password"
-          value={userInfo.password}
-          onChange={(e) => {
-            setUserInfo({ ...userInfo, password: e.target.value });
-          }}
-        />
-        <br />
+        <StyledInputDiv>
+          <IoPerson className="inputIcon" size={24} />
+          <StyledInput
+            type="text"
+            placeholder="ID"
+            value={userInfo.id}
+            onChange={(e) => {
+              setUserInfo({ ...userInfo, id: e.target.value });
+            }}
+          />
+        </StyledInputDiv>
+        <StyledInputDiv>
+          <BiSolidLockAlt className="inputIcon" size={24} />
+          <StyledInput
+            type="password"
+            placeholder="Password"
+            value={userInfo.password}
+            onChange={(e) => {
+              setUserInfo({ ...userInfo, password: e.target.value });
+            }}
+          />
+        </StyledInputDiv>
         <StyledSubmit type="submut">Login</StyledSubmit>
       </form>
       <StyledSignup onClick={() => navigation("/signup", { replace: true })}>

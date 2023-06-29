@@ -62,7 +62,7 @@ function Tab(props) {
 
       var link = document.createElement("a");
       link.href = canvas.toDataURL("image/png");
-      link.download = "Loca_image.png";
+      link.download = "Other_image.png";
       link.click();
     };
 
@@ -74,7 +74,7 @@ function Tab(props) {
       <StyledTab>
         <StyledContent>
           <StyledLocal>
-            <StyledTitle>현지화 이미지</StyledTitle>
+            <StyledTitle>새로운 이미지</StyledTitle>
             <StyledButtonGroup>
               <StyledButton onClick={downloadImage}>
                 <LuDownload />

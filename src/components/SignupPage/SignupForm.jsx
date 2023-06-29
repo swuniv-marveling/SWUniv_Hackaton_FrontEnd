@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { styled } from "styled-components";
 import { API } from "../../global/Constants";
 import { useNavigate } from "react-router-dom";
+import { IoPerson, IoPersonOutline } from "react-icons/io5";
+import { BiSolidLockAlt } from "react-icons/bi";
 
 const StyledSingup = styled.div`
   text-align: center;
@@ -13,8 +15,14 @@ const StyledTitle = styled.div`
   margin: 50px 0 70px 0;
 `;
 
-const StyledInput = styled.input`
+const StyledInputDiv = styled.div`
   width: 480px;
+  position: relative;
+  margin: 0 auto;
+`;
+
+const StyledInput = styled.input`
+  width: 100%;
   font-size: 24px;
   background-color: transparent;
   border: 0;
@@ -64,33 +72,39 @@ function SignupForm() {
         {"간편하게 회원가입해 보세요 :)"}
       </StyledTitle>
       <form onSubmit={submitHandler}>
-        <StyledInput
-          type="text"
-          placeholder="닉네임"
-          value={userInfo.name}
-          onChange={(e) => {
-            setUserInfo({ ...userInfo, name: e.target.value });
-          }}
-        />
-        <br />
-        <StyledInput
-          type="text"
-          placeholder="id"
-          value={userInfo.id}
-          onChange={(e) => {
-            setUserInfo({ ...userInfo, id: e.target.value });
-          }}
-        />
-        <br />
-        <StyledInput
-          type="password"
-          placeholder="password"
-          value={userInfo.password}
-          onChange={(e) => {
-            setUserInfo({ ...userInfo, password: e.target.value });
-          }}
-        />
-        <br />
+        <StyledInputDiv>
+          <IoPersonOutline className="inputIcon" size={24} />
+          <StyledInput
+            type="text"
+            placeholder="닉네임"
+            value={userInfo.name}
+            onChange={(e) => {
+              setUserInfo({ ...userInfo, name: e.target.value });
+            }}
+          />
+        </StyledInputDiv>
+        <StyledInputDiv>
+          <IoPerson className="inputIcon" size={24} />
+          <StyledInput
+            type="text"
+            placeholder="ID"
+            value={userInfo.id}
+            onChange={(e) => {
+              setUserInfo({ ...userInfo, id: e.target.value });
+            }}
+          />
+        </StyledInputDiv>
+        <StyledInputDiv>
+          <BiSolidLockAlt className="inputIcon" size={24} />
+          <StyledInput
+            type="password"
+            placeholder="Password"
+            value={userInfo.password}
+            onChange={(e) => {
+              setUserInfo({ ...userInfo, password: e.target.value });
+            }}
+          />
+        </StyledInputDiv>
         <StyledSubmit type="submut">Sign up</StyledSubmit>
       </form>
     </StyledSingup>
